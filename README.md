@@ -829,7 +829,10 @@ pip3 install pymysql
 ```
 数据库表文件为t_danmu.sql
 
-# 五、服务器部署
+# 五、数据分析
+processor模块用于数据处理和分析
+
+# 六、服务器部署
 ```shell
 nohup python3 spider.py &
 ```

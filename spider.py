@@ -1,25 +1,22 @@
-from websocket import WebSocketApp
 import json
 import re
 import gzip
+import time
 import datetime
-from urllib.parse import unquote_plus
 import requests
-from douyin_pb2 import PushFrame, Response, ChatMessage
 import pymysql
+from websocket import WebSocketApp
+from urllib.parse import unquote_plus
+from protobuf.douyin_pb2 import PushFrame, Response, ChatMessage
+from settings import db_conf
 
 # 定义直播间号
-# 交个朋友直播间：168465302284
+# 交个朋友：168465302284
+# 东方甄选：80017709309
 live_id = "168465302284"
 
 # 数据库连接
-db = pymysql.connect(host='your host',
-                     port=1111,
-                     user='root',
-                     password='your password',
-                     db='DY_Spider_DB',
-                     charset='utf8mb4')
-# 使用 cursor() 方法创建一个游标对象 cursor
+db = pymysql.connect(host=db_conf["host"], port=db_conf["port"], user=db_conf["user"], password=db_conf["password"], db=db_conf["db"], charset=db_conf["charset"])
 cursor = db.cursor()
 print("数据库连接成功！")
 
@@ -110,22 +107,27 @@ def on_close(*args, **kwargs):
 
 
 def run():
-    web_url = "https://live.douyin.com/" + live_id
-    room_id, room_title, room_user_count, wss_url, ttwid = fetch_live_room_info(web_url)
-    print(room_id, room_title, room_user_count, wss_url, ttwid)
+    try:
+        web_url = "https://live.douyin.com/" + live_id
+        room_id, room_title, room_user_count, wss_url, ttwid = fetch_live_room_info(web_url)
+        print(room_id, room_title, room_user_count, wss_url, ttwid)
 
-    ws = WebSocketApp(
-        url=wss_url,
-        header={
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
-        },
-        cookie=f"ttwid={ttwid}",
-        on_open=on_open,
-        on_message=on_message,
-        on_error=on_error,
-        on_close=on_close,
-    )
-    ws.run_forever()
+        ws = WebSocketApp(
+            url=wss_url,
+            header={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+            },
+            cookie=f"ttwid={ttwid}",
+            on_open=on_open,
+            on_message=on_message,
+            on_error=on_error,
+            on_close=on_close,
+        )
+        ws.run_forever()
+    except Exception as e:
+        print(e)
+        time.sleep(60)
+        run()
 
 
 if __name__ == '__main__':
