@@ -8,16 +8,15 @@ import requests
 from douyin_pb2 import PushFrame, Response, ChatMessage
 import pymysql
 
-# 定义直播间号：
-# 东方甄选直播间：80017709309
+# 定义直播间号
 # 交个朋友直播间：168465302284
-live_id = "80017709309"
+live_id = "168465302284"
 
 # 数据库连接
-db = pymysql.connect(host='sh-cynosdbmysql-grp-dy68nzyy.sql.tencentcdb.com',
-                     port=,
+db = pymysql.connect(host='your host',
+                     port=1111,
                      user='root',
-                     password='',
+                     password='your password',
                      db='DY_Spider_DB',
                      charset='utf8mb4')
 # 使用 cursor() 方法创建一个游标对象 cursor

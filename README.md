@@ -823,9 +823,11 @@ if __name__ == '__main__':
 ```
 
 # 四、数据库
+先安装包，如spider.py里面的内容一样进行引入
 ```shell
 pip3 install pymysql
 ```
+数据库表文件为t_danmu.sql
 
 # 五、服务器部署
 ```shell
