@@ -13,7 +13,7 @@ from settings import db_conf
 # 定义直播间号
 # 交个朋友：168465302284
 # 东方甄选：80017709309
-live_id = "168465302284"
+live_id = "80017709309"
 
 # 数据库连接
 db = pymysql.connect(host=db_conf["host"], port=db_conf["port"], user=db_conf["user"], password=db_conf["password"], db=db_conf["db"], charset=db_conf["charset"])
@@ -98,7 +98,9 @@ def on_message(ws, content):
 
 def on_error(ws, content):
     print(content)
-    print("on_error")
+    print("on_error, after 60s, try again")
+    time.sleep(60)
+    run()
 
 
 def on_close(*args, **kwargs):
@@ -107,27 +109,25 @@ def on_close(*args, **kwargs):
 
 
 def run():
+    web_url = "https://live.douyin.com/" + live_id
+    room_id, room_title, room_user_count, wss_url, ttwid = fetch_live_room_info(web_url)
+    print(room_id, room_title, room_user_count, wss_url, ttwid)
+    ws = WebSocketApp(
+        url=wss_url,
+        header={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+        },
+        cookie=f"ttwid={ttwid}",
+        on_open=on_open,
+        on_message=on_message,
+        on_error=on_error,
+        on_close=on_close,
+    )
     try:
-        web_url = "https://live.douyin.com/" + live_id
-        room_id, room_title, room_user_count, wss_url, ttwid = fetch_live_room_info(web_url)
-        print(room_id, room_title, room_user_count, wss_url, ttwid)
-
-        ws = WebSocketApp(
-            url=wss_url,
-            header={
-                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
-            },
-            cookie=f"ttwid={ttwid}",
-            on_open=on_open,
-            on_message=on_message,
-            on_error=on_error,
-            on_close=on_close,
-        )
         ws.run_forever()
     except Exception as e:
         print(e)
-        time.sleep(60)
-        run()
+        ws.close()
 
 
 if __name__ == '__main__':

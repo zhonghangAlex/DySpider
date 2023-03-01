@@ -8,6 +8,11 @@ db_conf = {
     "charset": "utf8mb4"
 }
 
+# 爬虫设置
+spider_conf = {
+    "room_id": "80017709309"
+}
+
 # 数据处理设置
 process_conf = {
     "frequency": {
