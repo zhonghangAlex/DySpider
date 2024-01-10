@@ -724,10 +724,6 @@ message User {
 ## 4.2 demo.py
 
 ```python
-"""
-讲师：武沛齐
-微信：wupeiqi666
-"""
 from websocket import WebSocketApp
 import json
 import re
